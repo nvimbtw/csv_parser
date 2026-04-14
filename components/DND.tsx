@@ -45,6 +45,15 @@ export default function DND() {
         setProcessed(true);
     };
 
+    const handleSort = (index: number) => {
+        if (sortingColumn === index) {
+            setSortDirection(prev => (prev === "asc" ? "desc" : "asc"));
+        } else {
+            setSortingColumn(index);
+            setSortDirection("asc");
+        }
+    };
+
     const displayedData = useMemo(() => {
         if (data.length === 0) return [];
 
@@ -70,7 +79,7 @@ export default function DND() {
             return sortDirection === "asc" ? result : -result;
         });
 
-        // FILTER
+        // SEARCH
         const lowerSearch = search.toLowerCase();
 
         const filteredRows = sortedRows.filter((row) => {
@@ -84,17 +93,9 @@ export default function DND() {
         return [header, ...filteredRows];
     }, [data, search, sortingColumn, sortDirection]);
 
-    const handleSort = (index: number) => {
-        if (sortingColumn === index) {
-            setSortDirection(prev => (prev === "asc" ? "desc" : "asc"));
-        } else {
-            setSortingColumn(index);
-            setSortDirection("asc");
-        }
-    };
-
     return (
         <>
+            {/* Upload UI */}
             <div className={`w-full max-w-md mx-auto p-8 ${processed ? "hidden" : "block"}`}>
                 <div
                     className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${
@@ -129,8 +130,10 @@ export default function DND() {
                 </button>
             </div>
 
+            {/* Table */}
             {processed && (
                 <div className="w-full my-8">
+                    {/* Search */}
                     <div className="block w-lg mx-auto">
                         <input
                             type="text"
@@ -144,6 +147,12 @@ export default function DND() {
                     <table className="w-7xl mx-auto mt-8 border table-auto">
                         <thead>
                             <tr>
+                                {/* Row number header */}
+                                <th className="border px-2 py-2 bg-gray-200">
+                                    #
+                                </th>
+
+                                {/* Data headers */}
                                 {displayedData[0]?.map((cell, index) => (
                                     <th
                                         key={index}
@@ -169,6 +178,12 @@ export default function DND() {
                         <tbody>
                             {displayedData.slice(1).map((row, i) => (
                                 <tr key={i}>
+                                    {/* Row number */}
+                                    <td className="border px-2 py-1 text-center bg-gray-100 font-medium">
+                                        {i + 1}
+                                    </td>
+
+                                    {/* Cells */}
                                     {row.map((cell, j) => (
                                         <td
                                             key={j}
