@@ -16,15 +16,15 @@ export default function Header() {
     }, [scrolled]);
 
     return (
-        <nav className="sticky top-0 z-50 w-full bg-light-background grid grid-cols-2 transition-all duration-300">
-            <div className="logo w-full py-2 px-2">
-                <Image
-                    src={"/Palfinger_big.png"}
-                    alt=""
-                    width={scrolled ? 100 : 200}
-                    height={scrolled ? 100 : 500}
-                />
-            </div>
+        <nav className="sticky top-0 z-50 w-full bg-light-background flex justify-between items-center py-2 px-2">
+        <h1 className="text-xl text-red-500 font-bold">CSV Parser</h1>
+
+        <Image
+            src={"/Palfinger_big.png"}
+            alt=""
+            width={scrolled ? 100 : 200}
+            height={scrolled ? 100 : 200}
+        />
         </nav>
     );
 }

@@ -95,11 +95,10 @@ export default function DND() {
 
     return (
         <>
-            {/* Upload UI */}
-            <div className={`w-full max-w-md mx-auto p-8 ${processed ? "hidden" : "block"}`}>
+            <div className={`w-full h-[calc(100vh-4rem)] content-center max-w-2xl mx-auto p-8 ${processed ? "hidden" : "block"}`}>
                 <div
-                    className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${
-                        isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"
+                    className={`border-1 px-12 py-24 text-center cursor-pointer transition-colors ${
+                        isDragging ? "border-red-500 bg-red-50" : "border-red-300 hover:border-red-400"
                     }`}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
@@ -114,9 +113,9 @@ export default function DND() {
                     />
 
                     {file ? (
-                        <p className="text-sm text-gray-600">{file.name}</p>
+                        <p className="text-xl text-gray-600">{file.name}</p>
                     ) : (
-                        <p className="text-sm text-gray-500">
+                        <p className="text-xl text-gray-500">
                             Drop CSV file here or click to browse
                         </p>
                     )}
@@ -124,7 +123,7 @@ export default function DND() {
 
                 <button
                     onClick={handleClick}
-                    className="mt-4 w-full py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    className="mt-4 w-full py-2 px-4 bg-red-500 text-white border-1 cursor-pointer border-red-500 hover:bg-red-50 hover:text-red-500"
                 >
                     Process
                 </button>
