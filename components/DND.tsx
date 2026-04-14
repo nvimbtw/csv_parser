@@ -1,4 +1,6 @@
 'use client';
+import { parse } from "path";
+import Papa, { ParseResult, ParseError } from "papaparse";
 import { useState, useRef } from "react";
 
 export default function DND() {
@@ -29,7 +31,21 @@ export default function DND() {
         if (selectedFile) setFile(selectedFile);
     };
 
-    const handleClick = () => {
+    const handleClick = async () => {
+        if (!file) {
+            console.log("No file selected");
+            return;
+        }
+
+        const data = await parseCSV(file);
+
+        if (!data) {
+            console.log("No file selected");
+            return;
+        }
+
+        populateTable(data);        
+
         setProcessed(true);
     };
 
@@ -61,8 +77,34 @@ export default function DND() {
             </button>
 
             <div className={processed ? "block" : "hidden"}>
-                <p className="mt-4 text-green-600">Processed!</p>
+                <table id="dataTable"></table>
             </div>
         </div>
     );
+}
+
+function parseCSV(file: File): Promise<string[][]> {
+    return new Promise((resolve, reject) => {
+        Papa.parse<string[]>(file, {
+            complete: (results: ParseResult<string[]>) => {
+                resolve(results.data);
+            },
+            error: (error: ParseError) => {
+                reject(error);
+            }
+        });
+    });
+}
+
+function populateTable(data: ParseResult<string[]>) {
+    var table = document.getElementById("dataTable");
+
+    data.forEach(function(row: string[], index: number, data: ParseResult<string[]>) {
+        var tableRow = table.insertRow(index);
+
+        row.forEach(function(cell: string, index: number, row: string[]) {
+            var TableRowCell = tableRow.insertCell(index)
+            TableRowCell.innerHTML = cell;
+        });
+    });
 }

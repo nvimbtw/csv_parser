@@ -25,12 +25,6 @@ export default function Header() {
                     height={scrolled ? 100 : 500}
                 />
             </div>
-
-            <ul className="flex items-center justify-end gap-8 pr-4">
-                <li><a href="#" className="text-sm font-medium hover:text-gray-600">Home</a></li>
-                <li><a href="#" className="text-sm font-medium hover:text-gray-600">Products</a></li>
-                <li><a href="#" className="text-sm font-medium hover:text-gray-600">Contact</a></li>
-            </ul>
         </nav>
     );
 }
