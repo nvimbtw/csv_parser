@@ -111,40 +111,50 @@ export default function Table({ data }: TableProps) {
 
                 <tbody>
                     {displayedData.slice(1).map((row, i) => {
-                        // determine highlight classes based on last field value
-                        let cellBgClass = "";
-                        let cellTextClass = "text-[var(--color-foreground)]";
+                        // determine highlight color based on last field value
+                        let colorType: 'red' | 'yellow' | 'green' | null = null;
                         if (highlight) {
-                            const last = String(row[row.length - 1] ?? "").trim();
+                            const last = String(row[row.length - 1] ?? '').trim();
                             const num = parseFloat(last.replace(/,/g, '.'));
                             if (!isNaN(num)) {
-                                if (num < 0) {
-                                    cellBgClass = "bg-red-900";
-                                    cellTextClass = "text-red-50";
-                                } else if (num < 50) {
-                                    cellBgClass = "bg-yellow-900";
-                                    cellTextClass = "text-yellow-50";
-                                } else {
-                                    cellBgClass = "bg-green-900";
-                                    cellTextClass = "text-green-50";
-                                }
+                                if (num < 0) colorType = 'red';
+                                else if (num < 50) colorType = 'yellow';
+                                else colorType = 'green';
                             }
+                        }
+
+                        let fontClass = 'text-[var(--color-foreground)]';
+                        let bgClass = '';
+                        if (colorType === 'red') {
+                            fontClass = 'text-red-500 dark:text-red-50';
+                            bgClass = 'bg-red-50 dark:bg-red-900';
+                        } else if (colorType === 'yellow') {
+                            fontClass = 'text-yellow-500 dark:text-yellow-50';
+                            bgClass = 'bg-yellow-50 dark:bg-yellow-900';
+                        } else if (colorType === 'green') {
+                            fontClass = 'text-green-500 dark:text-green-50';
+                            bgClass = 'bg-green-50 dark:bg-green-900';
                         }
 
                         return (
                             <tr key={i}>
-                                <td className="border border-black px-2 py-1 text-center bg-[var(--color-light-background)] font-medium text-[var(--color-foreground)]">
+                                <td className={`border border-black px-2 py-1 text-center bg-[var(--color-light-background)] font-medium ${fontClass}`}>
                                     {i + 1}
                                 </td>
 
-                                {row.map((cell, j) => (
-                                    <td
-                                        key={j}
-                                        className={`border border-black px-2 py-1 text-center ${j === 0 ? 'bg-[var(--color-light-background)] text-[var(--color-foreground)]' : ''} ${j !== 0 && cellBgClass ? `${cellBgClass} ${cellTextClass}` : 'text-[var(--color-foreground)]'}`}
-                                    >
-                                        {cell}
-                                    </td>
-                                ))}
+                                {row.map((cell, j) => {
+                                    const cellBg = bgClass ? bgClass : 'bg-[var(--color-light-background)]';
+                                    const cellText = fontClass;
+
+                                    return (
+                                        <td
+                                            key={j}
+                                            className={`border border-black px-2 py-1 text-center ${cellBg} ${cellText}`}
+                                        >
+                                            {cell}
+                                        </td>
+                                    );
+                                })}
                             </tr>
                         );
                     })}
