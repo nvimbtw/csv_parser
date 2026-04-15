@@ -6,6 +6,7 @@ interface TableProps {
 
 export default function Table({ data }: TableProps) {
     const [search, setSearch] = useState("");
+    const [highlight, setHighlight] = useState(false);
     const [sortingColumn, setSortingColumn] = useState(0);
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
@@ -63,31 +64,33 @@ export default function Table({ data }: TableProps) {
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-lg border-b-1 border-gray-300 px-2 py-2 focus:outline-0 placeholder:italic"
+                    className="w-lg border-b-1 border-gray-300 dark:border-gray-600 bg-[var(--color-background)] text-[var(--color-foreground)] px-2 py-2 focus:outline-0 placeholder:italic"
                     placeholder="Search..."
                 />
 
-                <div className="flex ml-8">
+                <div className="flex items-center ml-8">
                     <input
                         type="checkbox"
-                        name=""
-                        id=""
+                        id="highlight"
+                        checked={highlight}
+                        onChange={(e) => setHighlight(e.target.checked)}
+                        className=""
                     />
-                    <label htmlFor="" className="ml-4 mt-2 text-md">Highlight</label>
+                    <label htmlFor="highlight" className="ml-2 text-md text-gray-900 dark:text-gray-100">Highlight</label>
                 </div>
             </div>
 
-            <table className="w-7xl mx-auto mt-8 border table-auto">
+            <table className="w-7xl mx-auto mt-8 border border-black table-auto bg-[var(--color-light-background)]">
                 <thead>
                     <tr>
-                        <th className="border px-2 py-2 bg-gray-200">
+                        <th className="border border-black px-2 py-2 bg-[var(--color-light-background)] text-[var(--color-foreground)]">
                             #
                         </th>
 
                         {displayedData[0]?.map((cell, index) => (
                             <th
                                 key={index}
-                                className="border px-2 py-2 bg-gray-200"
+                                className="border border-black px-2 py-2 bg-[var(--color-light-background)] text-[var(--color-foreground)]"
                             >
                                 <button
                                     onClick={() => handleSort(index)}
@@ -107,22 +110,36 @@ export default function Table({ data }: TableProps) {
                 </thead>
 
                 <tbody>
-                    {displayedData.slice(1).map((row, i) => (
-                        <tr key={i}>
-                            <td className="border px-2 py-1 text-center bg-gray-100 font-medium">
-                                {i + 1}
-                            </td>
+                    {displayedData.slice(1).map((row, i) => {
+                        // determine color based on last field value
+                        let rowClasses = "";
+                        if (highlight) {
+                            const last = String(row[row.length - 1] ?? '').trim();
+                            const num = parseFloat(last.replace(/,/g, '.'));
+                            if (!isNaN(num)) {
+                                if (num < 0) rowClasses = "text-red-500 bg-red-50";
+                                else if (num < 50) rowClasses = "text-yellow-500 bg-yellow-50";
+                                else rowClasses = "text-green-500 bg-green-50";
+                            }
+                        }
 
-                            {row.map((cell, j) => (
-                                <td
-                                    key={j}
-                                    className="border px-2 py-1 text-center"
-                                >
-                                    {cell}
+                            return (
+                            <tr key={i} className={rowClasses}>
+                                <td className="border border-black px-2 py-1 text-center bg-gray-100 font-medium">
+                                    {i + 1}
                                 </td>
-                            ))}
-                        </tr>
-                    ))}
+
+                                {row.map((cell, j) => (
+                                    <td
+                                        key={j}
+                                        className="border border-black px-2 py-1 text-center"
+                                    >
+                                        {cell}
+                                    </td>
+                                ))}
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
         </div>
@@ -149,6 +166,7 @@ function parseDate(str: string): Date | null {
 function getSortValue(val: string): number | string {
     const trimmed = val.trim();
 
+    // Try parsing DD.MM.YYYY first
     const date = parseDate(trimmed);
     if (date) return date.getTime();
 
